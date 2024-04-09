@@ -16,8 +16,10 @@ lon = "19.93658"
 background_color, foreground_color, selection_color, text_field_color = "#0A0D11", "#6272A4", "#44475A", "#F8F8F2"
 
 def is_hex_color(s):
-    hex_color_regex = r'^#(?:[0-9a-fA-F]{3}){1,2}$'
-    return bool(re.match(hex_color_regex, s))
+    hex_color_regex = r'(?:[0-9a-fA-F]{3}){1,2}$'
+    if(bool(re.search(hex_color_regex, s))):
+        print("Color is correct")
+    return bool(re.search(hex_color_regex, s))
 
 
 def get_weather():
@@ -457,9 +459,9 @@ class ThemeWindow(BaseWindow):
     def update_styles_css(self, button):
         global background_color, foreground_color, selection_color, text_field_color
         background_color = self.background_color_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "0A0D11"
-        foreground_color = self.foreground_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "6272A4"
-        selection_color = self.selection_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "44475A"
-        text_field_color = self.text_field_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "F8F8F2"
+        foreground_color = self.foreground_entry.get_text() if is_hex_color(self.foreground_entry.get_text()) else "6272A4"
+        selection_color = self.selection_entry.get_text() if is_hex_color(self.selection_entry.get_text()) else "44475A"
+        text_field_color = self.text_field_entry.get_text() if is_hex_color(self.text_field_entry.get_text()) else "F8F8F2"
         styles_css = f"""
 #menu-bar {{
     background-color: #{foreground_color}; 
