@@ -97,7 +97,7 @@ class BaseWindow(Gtk.Window):
         menu_bar.append(settings)
 
         about_program = Gtk.MenuItem(label="O Programie")
-        theme.connect("activate", self.on_about_program_clicked)
+        about_program.connect("activate", self.on_about_program_clicked)
         about_program.set_name("menu-item")
 
         menu_bar.append(about_program)
@@ -105,22 +105,25 @@ class BaseWindow(Gtk.Window):
         self.main_box.pack_start(menu_bar, False, False, 0)
     
     def on_longitude_clicked(self, _):
+        print("xd")
         longitude_window = LongitudeWindow()
         longitude_window.show_all()
         
     def on_latitude_clicked(self, _):
-        longitude_window = LatitudeWindow()
-        longitude_window.show_all()
+        latitude_window = LatitudeWindow()
+        latitude_window.show_all()
 
     def on_change_city_clicked(self, _):
-        longitude_window = ChangeCityWindow()
-        longitude_window.show_all()
+        change_city_window = ChangeCityWindow()
+        change_city_window.show_all()
 
     def on_theme_clicked(self, _):
         pass
 
     def on_about_program_clicked(self, _):
-        pass
+        print("xd")
+        about_program_window = AboutProgramWindow()
+        about_program_window.show_all()
 
     def on_quit_activate(self, _):
         Gtk.main_quit()
@@ -314,6 +317,34 @@ class ChangeCityWindow(BaseWindow):
         city = self.city_entry.get_text()
         change_city(city)
         self.on_show_weather_clicked()
+
+    def on_show_weather_clicked(self, button):
+        longitude_window = WeatherWindow()
+        longitude_window.show_all()
+        self.destroy()
+
+class AboutProgramWindow(BaseWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=100)
+        self.add(self.main_box)
+
+        self.build_menu_bar()
+
+        center_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.main_box.pack_start(center_box, True, True, 0)
+
+        inner_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        inner_box.set_margin_start(100)
+        inner_box.set_margin_end(100)
+        inner_box.set_margin_top(100)
+        inner_box.set_margin_bottom(100)
+        inner_box.set_size_request(400, 200)
+        center_box.pack_start(inner_box, True, True, 0)
+
+        info_label = Gtk.Label(label="Aplikacja prognozy pogody pozwala na natychmiastowe uzyskanie aktualnych informacji o: temperaturze wraz z\n\nwartością odczuwalną, podsumowaniu pogody, ciśnieniu, wilgotności i prędkości wiatru. Wyświetlana jest ikona\n\nprzedstawiająca obecną sytuację pogodową. Działanie programu wymaga ustawienia lokalizacji według miasta\n\nlub współrzędnych geograficznych.")
+        inner_box.pack_start(info_label, False, False, 0)
 
     def on_show_weather_clicked(self, button):
         longitude_window = WeatherWindow()
