@@ -15,10 +15,48 @@ lon = "19.93658"
 
 background_color, foreground_color, selection_color, text_field_color = "#0A0D11", "#6272A4", "#44475A", "#F8F8F2"
 
+def update_styles_css(color1, color2, color3, color4):
+    global background_color, foreground_color, selection_color, text_field_color
+    background_color = color1
+    foreground_color = color2
+    selection_color = color3
+    text_field_color = color4
+    styles_css = f"""
+#menu-bar {{
+    background-color: #{foreground_color}; 
+    color: #FFFFFF;
+    font-size: 24px;           
+}}
+
+#menu-item {{
+    background-color: #{text_field_color};
+    color: #000000;
+}}
+
+#main-box {{
+    background-color: #{background_color};
+    color: #FFFFFF;
+    font-size: 24px;
+}}
+
+#inner-box {{
+    background-color: #{selection_color};
+    font-size: 24px;
+}}
+
+#temperature {{
+    font-size: 96px;
+}}
+
+#about-program {{
+    font-size: 20px;
+}}
+"""
+    with open("styles.css", "w") as file:
+        file.write(styles_css)
+
 def is_hex_color(s):
     hex_color_regex = r'(?:[0-9a-fA-F]{3}){1,2}$'
-    if(bool(re.search(hex_color_regex, s))):
-        print("Color is correct")
     return bool(re.search(hex_color_regex, s))
 
 
@@ -426,29 +464,29 @@ class ThemeWindow(BaseWindow):
         longitude_label = Gtk.Label(label="Podaj kolor pierwszoplanowy w kodzie hex (bez #):")
         inner_box.pack_start(longitude_label, False, False, 0)
 
-        self.foreground_entry = Gtk.Entry()
-        self.foreground_entry.set_placeholder_text("<kolor pierwszoplanowy w kodzie hex (bez #)>")
-        self.foreground_entry.set_margin_start(50)
-        self.foreground_entry.set_margin_end(50)
-        inner_box.pack_start(self.foreground_entry, False, False, 0)
+        self.foreground_color_entry = Gtk.Entry()
+        self.foreground_color_entry.set_placeholder_text("<kolor pierwszoplanowy w kodzie hex (bez #)>")
+        self.foreground_color_entry.set_margin_start(50)
+        self.foreground_color_entry.set_margin_end(50)
+        inner_box.pack_start(self.foreground_color_entry, False, False, 0)
 
         longitude_label = Gtk.Label(label="Podaj kolor zaznaczenia w kodzie hex (bez #):")
         inner_box.pack_start(longitude_label, False, False, 0)
 
-        self.selection_entry = Gtk.Entry()
-        self.selection_entry.set_placeholder_text("<kolor zaznaczenia w kodzie hex (bez #)>")
-        self.selection_entry.set_margin_start(50)
-        self.selection_entry.set_margin_end(50)
-        inner_box.pack_start(self.selection_entry, False, False, 0)
+        self.selection_color_entry = Gtk.Entry()
+        self.selection_color_entry.set_placeholder_text("<kolor zaznaczenia w kodzie hex (bez #)>")
+        self.selection_color_entry.set_margin_start(50)
+        self.selection_color_entry.set_margin_end(50)
+        inner_box.pack_start(self.selection_color_entry, False, False, 0)
 
         longitude_label = Gtk.Label(label="Podaj kolor pola tekstowego w kodzie hex (bez #):")
         inner_box.pack_start(longitude_label, False, False, 0)
 
-        self.text_field_entry = Gtk.Entry()
-        self.text_field_entry.set_placeholder_text("<kolor pola tekstowego w kodzie hex (bez #)>")
-        self.text_field_entry.set_margin_start(50)
-        self.text_field_entry.set_margin_end(50)
-        inner_box.pack_start(self.text_field_entry, False, False, 0)
+        self.text_field_color_entry = Gtk.Entry()
+        self.text_field_color_entry.set_placeholder_text("<kolor pola tekstowego w kodzie hex (bez #)>")
+        self.text_field_color_entry.set_margin_start(50)
+        self.text_field_color_entry.set_margin_end(50)
+        inner_box.pack_start(self.text_field_color_entry, False, False, 0)
 
         save_button = Gtk.Button(label="Zatwierdź")
         save_button.set_margin_start(550)
@@ -457,48 +495,15 @@ class ThemeWindow(BaseWindow):
         inner_box.pack_start(save_button, False, False, 0)
 
     def update_styles_css(self, button):
-        global background_color, foreground_color, selection_color, text_field_color
-        background_color = self.background_color_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "0A0D11"
-        foreground_color = self.foreground_entry.get_text() if is_hex_color(self.foreground_entry.get_text()) else "6272A4"
-        selection_color = self.selection_entry.get_text() if is_hex_color(self.selection_entry.get_text()) else "44475A"
-        text_field_color = self.text_field_entry.get_text() if is_hex_color(self.text_field_entry.get_text()) else "F8F8F2"
-        styles_css = f"""
-#menu-bar {{
-    background-color: #{foreground_color}; 
-    color: #FFFFFF;
-    font-size: 24px;           
-}}
-
-#menu-item {{
-    background-color: #{text_field_color};
-    color: #000000;
-}}
-
-#main-box {{
-    background-color: #{background_color};
-    color: #FFFFFF;
-    font-size: 24px;
-}}
-
-#inner-box {{
-    background-color: #{selection_color};
-    font-size: 24px;
-}}
-
-#temperature {{
-    font-size: 96px;
-}}
-
-#about-program {{
-    font-size: 20px;
-}}
-"""
-        with open("styles.css", "w") as file:
-            file.write(styles_css)
+        update_styles_css(self.background_color_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else background_color,
+                          self.foreground_color_entry.get_text() if is_hex_color(self.foreground_color_entry.get_text()) else foreground_color,
+                          self.selection_color_entry.get_text() if is_hex_color(self.selection_color_entry.get_text()) else selection_color,
+                          self.text_field_color_entry.get_text() if is_hex_color(self.text_field_color_entry.get_text()) else text_field_color)
         self.on_weather_clicked(button)
 
     
 if __name__ == "__main__":
+    update_styles_css("0A0D11", "6272A4", "44475A", "F8F8F2")
     win = WeatherWindow()
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
