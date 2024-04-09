@@ -2,7 +2,7 @@ import requests
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GObject, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf
 from googletrans import Translator
 
 api_key = "a873d523875cab9a1f04d55526e2d604"
@@ -63,11 +63,9 @@ class BaseWindow(Gtk.Window):
         menu_bar = Gtk.MenuBar()
         menu_bar.set_name("menu-bar")
 
-        logo_image = Gtk.Image.new_from_file("cloudy.png")
-        logo_item = Gtk.ImageMenuItem()
-        logo_item.set_image(logo_image)
-        logo_item.connect("activate", self.on_weather_clicked)
-        menu_bar.prepend(logo_item)
+        logo = Gtk.MenuItem(label="Prognoza Pogody")
+        logo.connect("activate", self.on_weather_clicked)
+        menu_bar.append(logo)
 
         localisation_menu = Gtk.Menu()
         localisation = Gtk.MenuItem(label="Lokalizacja")
