@@ -56,6 +56,12 @@ class BaseWindow(Gtk.Window):
         menu_bar = Gtk.MenuBar()
         menu_bar.set_name("menu-bar")
 
+        logo_image = Gtk.Image.new_from_file("cloudy.png")
+        logo_item = Gtk.ImageMenuItem()
+        logo_item.set_image(logo_image)
+        logo_item.connect("activate", self.on_weather_clicked)
+        menu_bar.prepend(logo_item)
+
         localisation_menu = Gtk.Menu()
         localisation = Gtk.MenuItem(label="Lokalizacja")
         localisation.set_submenu(localisation_menu)
@@ -103,9 +109,12 @@ class BaseWindow(Gtk.Window):
         menu_bar.append(about_program)
 
         self.main_box.pack_start(menu_bar, False, False, 0)
+
+    def on_weather_clicked(self, _):
+        weather_window = WeatherWindow()
+        weather_window.show_all()
     
     def on_longitude_clicked(self, _):
-        print("xd")
         longitude_window = LongitudeWindow()
         longitude_window.show_all()
         
@@ -121,7 +130,6 @@ class BaseWindow(Gtk.Window):
         pass
 
     def on_about_program_clicked(self, _):
-        print("xd")
         about_program_window = AboutProgramWindow()
         about_program_window.show_all()
 
