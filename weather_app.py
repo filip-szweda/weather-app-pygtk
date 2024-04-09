@@ -13,7 +13,7 @@ is_sunny = True
 lat = "50.06143"
 lon = "19.93658"
 
-background_color, foreground_color, selection_color, text_field_color = "#0A0D11", "#6272A4", "#44475A", "#F8F8F2"
+background_color, foreground_color, selection_color, text_field_color = "#282A36", "#6272A4", "#44475A", "#F8F8F2"
 
 def is_hex_color(s):
     hex_color_regex = r'(?:[0-9a-fA-F]{3}){1,2}$'
