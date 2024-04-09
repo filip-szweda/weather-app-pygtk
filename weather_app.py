@@ -203,6 +203,7 @@ class LongitudeWindow(BaseWindow):
         center_box.pack_start(inner_box, True, True, 0)
 
         close_button = Gtk.Button(label="X")
+        close_button.set_margin_start(1240)
         close_button.connect("clicked", self.on_show_weather_clicked)
         inner_box.pack_start(close_button, False, False, 0)
 
@@ -248,6 +249,7 @@ class LatitudeWindow(BaseWindow):
         center_box.pack_start(inner_box, True, True, 0)
 
         close_button = Gtk.Button(label="X")
+        close_button.set_margin_start(1240)
         close_button.connect("clicked", self.on_show_weather_clicked)
         inner_box.pack_start(close_button, False, False, 0)
 
@@ -293,6 +295,7 @@ class ChangeCityWindow(BaseWindow):
         center_box.pack_start(inner_box, True, True, 0)
 
         close_button = Gtk.Button(label="X")
+        close_button.set_margin_start(1240)
         close_button.connect("clicked", self.on_show_weather_clicked)
         inner_box.pack_start(close_button, False, False, 0)
 
@@ -318,7 +321,7 @@ class ChangeCityWindow(BaseWindow):
         self.destroy()
     
 if __name__ == "__main__":
-    win = WeatherWindow()
+    win = LongitudeWindow()
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
     Gtk.main()
