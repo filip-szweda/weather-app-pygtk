@@ -1,0 +1,29 @@
+#menu-bar {
+    background-color: #596A99; 
+    color: #FFFFFF;
+    font-size: 24px;           
+}
+
+#menu-item {
+    background-color: #F8F8F2;
+    color: #000000;
+}
+
+#main-box {
+    background-color: #0E1013;
+    color: #FFFFFF;
+    font-size: 24px;
+}
+
+#inner-box {
+    background-color: #3D4051;
+    font-size: 24px;
+}
+
+#temperature {
+    font-size: 96px;
+}
+
+#about-program {
+    font-size: 20px;
+}
