@@ -1,4 +1,5 @@
 import requests
+import re
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -12,16 +13,23 @@ is_sunny = True
 lat = "50.06143"
 lon = "19.93658"
 
+background_color, foreground_color, selection_color, text_field_color = "#0A0D11", "#6272A4", "#44475A", "#F8F8F2"
+
+def is_hex_color(s):
+    hex_color_regex = r'^#(?:[0-9a-fA-F]{3}){1,2}$'
+    return bool(re.match(hex_color_regex, s))
+
+
 def get_weather():
-    # url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
-    # response = requests.get(url)
-    # global is_sunny
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     message = data["weather"][0]["description"]
-    #     is_sunny = "rain" in message or "cloud" in message
-    #     return data
-    # is_sunny = True
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+    response = requests.get(url)
+    global is_sunny
+    if response.status_code == 200:
+        data = response.json()
+        message = data["weather"][0]["description"]
+        is_sunny = "rain" in message or "cloud" in message
+        return data
+    is_sunny = True
     return {
         "weather": [
             {
@@ -136,7 +144,8 @@ class BaseWindow(Gtk.Window):
         change_city_window.show_all()
 
     def on_theme_clicked(self, _):
-        pass
+        theme_window = ThemeWindow()
+        theme_window.show_all()
 
     def on_about_program_clicked(self, _):
         about_program_window = AboutProgramWindow()
@@ -365,7 +374,7 @@ class AboutProgramWindow(BaseWindow):
         inner_box.set_name("inner-box")
         inner_box.set_margin_start(100)
         inner_box.set_margin_end(100)
-        inner_box.set_margin_top(80)
+        inner_box.set_margin_top(100)
         inner_box.set_margin_bottom(100)
         inner_box.set_size_request(400, 200)
         center_box.pack_start(inner_box, True, True, 0)
@@ -374,6 +383,118 @@ class AboutProgramWindow(BaseWindow):
         info_label.set_name("about-program")
         info_label.set_margin_top(100)
         inner_box.pack_start(info_label, False, False, 0)
+
+class ThemeWindow(BaseWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=100)
+        self.set_name("main-box")
+        self.add(self.main_box)
+
+        self.build_menu_bar()
+
+        center_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.main_box.pack_start(center_box, True, True, 0)
+
+        inner_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        inner_box.set_name("inner-box")
+        inner_box.set_margin_start(100)
+        inner_box.set_margin_end(100)
+        inner_box.set_margin_top(100)
+        inner_box.set_margin_bottom(100)
+        inner_box.set_size_request(400, 200)
+        center_box.pack_start(inner_box, True, True, 0)
+
+        close_button = Gtk.Button(label="X")
+        close_button.set_margin_start(1200)
+        close_button.set_margin_top(10)
+        close_button.connect("clicked", self.on_weather_clicked)
+        inner_box.pack_start(close_button, False, False, 0)
+
+        longitude_label = Gtk.Label(label="Podaj kolor tła w kodzie hex (bez #):")
+        inner_box.pack_start(longitude_label, False, False, 0)
+
+        self.background_color_entry = Gtk.Entry()
+        self.background_color_entry.set_placeholder_text("<kolor tła w kodzie hex (bez #)>")
+        self.background_color_entry.set_margin_start(50)
+        self.background_color_entry.set_margin_end(50)
+        inner_box.pack_start(self.background_color_entry, False, False, 0)
+
+        longitude_label = Gtk.Label(label="Podaj kolor pierwszoplanowy w kodzie hex (bez #):")
+        inner_box.pack_start(longitude_label, False, False, 0)
+
+        self.foreground_entry = Gtk.Entry()
+        self.foreground_entry.set_placeholder_text("<kolor pierwszoplanowy w kodzie hex (bez #)>")
+        self.foreground_entry.set_margin_start(50)
+        self.foreground_entry.set_margin_end(50)
+        inner_box.pack_start(self.foreground_entry, False, False, 0)
+
+        longitude_label = Gtk.Label(label="Podaj kolor zaznaczenia w kodzie hex (bez #):")
+        inner_box.pack_start(longitude_label, False, False, 0)
+
+        self.selection_entry = Gtk.Entry()
+        self.selection_entry.set_placeholder_text("<kolor zaznaczenia w kodzie hex (bez #)>")
+        self.selection_entry.set_margin_start(50)
+        self.selection_entry.set_margin_end(50)
+        inner_box.pack_start(self.selection_entry, False, False, 0)
+
+        longitude_label = Gtk.Label(label="Podaj kolor pola tekstowego w kodzie hex (bez #):")
+        inner_box.pack_start(longitude_label, False, False, 0)
+
+        self.text_field_entry = Gtk.Entry()
+        self.text_field_entry.set_placeholder_text("<kolor pola tekstowego w kodzie hex (bez #)>")
+        self.text_field_entry.set_margin_start(50)
+        self.text_field_entry.set_margin_end(50)
+        inner_box.pack_start(self.text_field_entry, False, False, 0)
+
+        save_button = Gtk.Button(label="Zatwierdź")
+        save_button.set_margin_start(550)
+        save_button.set_margin_end(550)
+        save_button.connect("clicked", self.update_styles_css)
+        inner_box.pack_start(save_button, False, False, 0)
+
+    def update_styles_css(self, button):
+        global background_color, foreground_color, selection_color, text_field_color
+        background_color = self.background_color_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "0A0D11"
+        foreground_color = self.foreground_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "6272A4"
+        selection_color = self.selection_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "44475A"
+        text_field_color = self.text_field_entry.get_text() if is_hex_color(self.background_color_entry.get_text()) else "F8F8F2"
+        styles_css = f"""
+#menu-bar {{
+    background-color: #{foreground_color}; 
+    color: #FFFFFF;
+    font-size: 24px;           
+}}
+
+#menu-item {{
+    background-color: #{text_field_color};
+    color: #000000;
+}}
+
+#main-box {{
+    background-color: #{background_color};
+    color: #FFFFFF;
+    font-size: 24px;
+}}
+
+#inner-box {{
+    background-color: #{selection_color};
+    font-size: 24px;
+}}
+
+#temperature {{
+    font-size: 96px;
+}}
+
+#about-program {{
+    font-size: 20px;
+}}
+"""
+        with open("styles.css", "w") as file:
+            file.write(styles_css)
+        self.on_weather_clicked(button)
+
     
 if __name__ == "__main__":
     win = WeatherWindow()
