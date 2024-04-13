@@ -227,7 +227,7 @@ class WeatherWindow(Gtk.Window):
         CoordinatesDialog(self).run()
 
     def on_change_theme_clicked(self, _):
-        pass
+        ThemeDialog(self).run()
 
     def on_about_program_clicked(self, _):
         AboutDialog(self).run()
@@ -335,6 +335,47 @@ class AboutDialog(Gtk.Dialog):
         box.pack_start(label, True, True, 0)
 
         self.show_all()
+
+class ThemeDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "Zmień Motyw", parent, 0)
+        self.set_default_size(910, 355)
+
+        box = self.get_content_area()
+
+        dracula_theme_button = Gtk.Button(label="Motyw Dracula (Domyślny)")
+        dracula_theme_button.connect("clicked", self.on_theme_button_clicked, "Dracula")
+        box.add(dracula_theme_button)
+
+        oxocarbon_theme_button = Gtk.Button(label="Motyw Seoul256")
+        oxocarbon_theme_button.connect("clicked", self.on_theme_button_clicked, "Seoul256")
+        box.add(oxocarbon_theme_button)
+
+        seoul256_theme_button = Gtk.Button(label="Motyw Gotham")
+        seoul256_theme_button.connect("clicked", self.on_theme_button_clicked, "Gotham")
+        box.add(seoul256_theme_button)
+
+        dogrun_theme_button = Gtk.Button(label="Motyw Nord")
+        dogrun_theme_button.connect("clicked", self.on_theme_button_clicked, "Nord")
+        box.add(dogrun_theme_button)
+
+        self.show_all()
+
+    def on_theme_button_clicked(self, widget, theme):
+        global background_color, foreground_color, selection_color, text_field_color
+        if theme == "Dracula":
+            background_color, foreground_color, selection_color, text_field_color = "#0A0D11", "#6272A4", "#44475A", "#F8F8F2"
+        elif theme == "Seoul256":
+            background_color, foreground_color, selection_color, text_field_color = "#4B4B4B", "#9A7372", "#565656", "#DFDEBD"
+        elif theme == "Gotham":
+            background_color, foreground_color, selection_color, text_field_color = "#091F2E", "#599CAB", "#2AA889", "#99D1CE"
+        elif theme == "Nord":
+            background_color, foreground_color, selection_color, text_field_color = "#81A1C1", "#D8DEE9", "#3C4455", "#434C5E"
+        update_styles_css(background_color, foreground_color, selection_color, text_field_color)
+        # new_window = WeatherForecastWindow()
+        # new_window.show()
+        # self.windows.append(new_window)
+        self.destroy()
     
 if __name__ == "__main__":
     update_styles_css("0A0D11", "6272A4", "44475A", "F8F8F2")
