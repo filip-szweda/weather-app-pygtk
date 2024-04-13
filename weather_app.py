@@ -22,30 +22,30 @@ def update_styles_css(color1, color2, color3, color4):
     text_field_color = color4
     styles_css = f"""
 #menu-bar {{
-    background-color: #{foreground_color}; 
+    background-color: {foreground_color}; 
     color: #FFFFFF;
     font-size: 24px;           
 }}
 
 #menu-item {{
-    background-color: #{text_field_color};
+    background-color: {text_field_color};
     color: #000000;
 }}
 
 #main-box {{
-    background-color: #{background_color};
+    background-color: {background_color};
     color: #FFFFFF;
     font-size: 24px;
 }}
 
 #inner-box {{
-    background-color: #{selection_color};
+    background-color: {selection_color};
     color: #FFFFFF;
     font-size: 24px;
 }}
 
 #about-program {{
-    background-color: #{selection_color};
+    background-color: {selection_color};
     color: #FFFFFF;
 }}
 
@@ -95,12 +95,12 @@ class WeatherWindow(Gtk.Window):
         self.set_default_size(1280, 720)
         self.set_resizable(False)
 
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_path("styles.css")
+        self.css_provider = Gtk.CssProvider()
+        self.css_provider.load_from_path("styles.css")
 
-        context = Gtk.StyleContext()
-        screen = Gdk.Screen.get_default()
-        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        self.context = Gtk.StyleContext()
+        self.screen = Gdk.Screen.get_default()
+        self.context.add_provider_for_screen(self.screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.set_name("main-box")
@@ -223,6 +223,10 @@ class WeatherWindow(Gtk.Window):
     def update_coordinates_in_ui(self):
         self.coordinates_info.set_text(f"Obecne współrzędne geograficzne:\nDługość ({lon}), Szerokość ({lat})")
 
+    def update_theme_in_ui(self):
+        self.css_provider.load_from_path("styles.css")
+        self.context.add_provider_for_screen(self.screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
     def on_change_coordinates_clicked(self, _):
         CoordinatesDialog(self).run()
 
@@ -338,6 +342,8 @@ class AboutDialog(Gtk.Dialog):
 
 class ThemeDialog(Gtk.Dialog):
     def __init__(self, parent):
+        self.parent = parent
+
         Gtk.Dialog.__init__(self, "Zmień Motyw", parent, 0)
         self.set_default_size(910, 355)
 
@@ -372,13 +378,11 @@ class ThemeDialog(Gtk.Dialog):
         elif theme == "Nord":
             background_color, foreground_color, selection_color, text_field_color = "#81A1C1", "#D8DEE9", "#3C4455", "#434C5E"
         update_styles_css(background_color, foreground_color, selection_color, text_field_color)
-        # new_window = WeatherForecastWindow()
-        # new_window.show()
-        # self.windows.append(new_window)
+        self.parent.update_theme_in_ui()
         self.destroy()
     
 if __name__ == "__main__":
-    update_styles_css("0A0D11", "6272A4", "44475A", "F8F8F2")
+    update_styles_css("#0A0D11", "#6272A4", "#44475A", "#F8F8F2")
     win = WeatherWindow()
     win.connect("destroy", Gtk.main_quit)
     win.show_all()

@@ -1,29 +1,29 @@
 
 #menu-bar {
-    background-color: ##6272A4; 
+    background-color: #9A7372; 
     color: #FFFFFF;
     font-size: 24px;           
 }
 
 #menu-item {
-    background-color: ##F8F8F2;
+    background-color: #DFDEBD;
     color: #000000;
 }
 
 #main-box {
-    background-color: ##0A0D11;
+    background-color: #4B4B4B;
     color: #FFFFFF;
     font-size: 24px;
 }
 
 #inner-box {
-    background-color: ##44475A;
+    background-color: #565656;
     color: #FFFFFF;
     font-size: 24px;
 }
 
 #about-program {
-    background-color: ##44475A;
+    background-color: #565656;
     color: #FFFFFF;
 }
 
