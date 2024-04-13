@@ -18,7 +18,13 @@
 
 #inner-box {
     background-color: #44475A;
+    color: #FFFFFF;
     font-size: 24px;
+}
+
+#about-program {
+    background-color: #44475A;
+    color: #FFFFFF;
 }
 
 #temperature {

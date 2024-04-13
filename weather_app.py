@@ -40,7 +40,13 @@ def update_styles_css(color1, color2, color3, color4):
 
 #inner-box {{
     background-color: #{selection_color};
+    color: #FFFFFF;
     font-size: 24px;
+}}
+
+#about-program {{
+    background-color: #{selection_color};
+    color: #FFFFFF;
 }}
 
 #temperature {{
@@ -224,7 +230,7 @@ class WeatherWindow(Gtk.Window):
         pass
 
     def on_about_program_clicked(self, _):
-        pass
+        AboutDialog(self).run()
 
     def on_refresh_clicked(self, _):
         weather = get_weather()
@@ -239,7 +245,6 @@ class CoordinatesDialog(Gtk.Dialog):
 
         Gtk.Dialog.__init__(self, "Zmień Współrzędne", parent)
         self.set_default_size(910, 355)
-
         self.set_name("inner-box")
 
         box = self.get_content_area()
@@ -267,7 +272,7 @@ class CoordinatesDialog(Gtk.Dialog):
         save_button.connect("clicked", self.save_coordinates)
         box.add(save_button)
 
-        box.show_all()
+        self.show_all()
 
     def validate_coordinates(self, lon, lat):
         lon_valid = False
@@ -302,6 +307,7 @@ class ErrorDialog(Gtk.Dialog):
     def __init__(self, parent):
         Gtk.Dialog.__init__(self, "Błąd", parent, 0)
         self.set_default_size(610, 100)
+        self.set_name("inner-box")
         self.set_modal(True)
 
         box = self.get_content_area()
@@ -311,6 +317,22 @@ class ErrorDialog(Gtk.Dialog):
         error_label = Gtk.Label(label="Niepoprawne współrzędne geograficzne!")
         error_label.set_halign(Gtk.Align.CENTER)
         box.add(error_label)
+
+        self.show_all()
+
+class AboutDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "O Programie", parent, 0)
+        self.set_default_size(910, 355)
+        self.set_name("about-program")
+
+        box = self.get_content_area()
+
+        label = Gtk.Label()
+        label.set_text("Aplikacja prognozy pogody pozwala na natychmiastowe uzyskanie aktualnych informacji o: temperaturze wraz z wartością odzuwalną, podsumowaniu pogody, ciśnieniu, wilgotności i prędkości wiatru. Wyświetlana jest ikona przedstawiająca obecną sytuację pogodową. Działanie programu wymaga ustawienia lokalizacji według miasta lub współrzędnych geograficznych.")
+        label.set_justify(Gtk.Justification.FILL)
+        label.set_line_wrap(True)
+        box.pack_start(label, True, True, 0)
 
         self.show_all()
     
