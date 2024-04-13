@@ -119,37 +119,37 @@ class WeatherWindow(Gtk.Window):
         weather = get_weather()
 
         temp = weather["main"]["temp"]
-        temp_info = Gtk.Label(label=f"{temp}ºC")
-        temp_info.set_name("temperature")
-        temp_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(temp_info, False, False, 0)
+        self.temp_info = Gtk.Label(label=f"{temp}ºC")
+        self.temp_info.set_name("temperature")
+        self.temp_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.temp_info, False, False, 0)
 
         feels_like_temp = weather["main"]["feels_like"]
-        feels_like_temp_info = Gtk.Label(label=f"Odczuwalnie: {feels_like_temp}ºC\n")
-        feels_like_temp_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(feels_like_temp_info, False, False, 0)
+        self.feels_like_temp_info = Gtk.Label(label=f"Odczuwalnie: {feels_like_temp}ºC\n")
+        self.feels_like_temp_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.feels_like_temp_info, False, False, 0)
 
         translator = Translator()
         message = weather["weather"][0]["description"]
         translated_message = translator.translate(message, dest="pl").text.lower() if message != "N/A" else "N/A"
-        message_info = Gtk.Label(label=f"Spodziewaj się: {translated_message}!\n")
-        message_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(message_info, False, False, 0)
+        self.message_info = Gtk.Label(label=f"Spodziewaj się: {translated_message}!\n")
+        self.message_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.message_info, False, False, 0)
 
         pressure = weather["main"]["pressure"]
-        pressure_info = Gtk.Label(label=f"Ciśnienie:\t{pressure} hPa\n")
-        pressure_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(pressure_info, False, False, 0)
+        self.pressure_info = Gtk.Label(label=f"Ciśnienie:\t{pressure} hPa\n")
+        self.pressure_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.pressure_info, False, False, 0)
 
         humidity = weather["main"]["humidity"]
-        humidity_info = Gtk.Label(label=f"Wilgotność:\t{humidity}%\n")
-        humidity_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(humidity_info, False, False, 0)
+        self.humidity_info = Gtk.Label(label=f"Wilgotność:\t{humidity}%\n")
+        self.humidity_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.humidity_info, False, False, 0)
 
         wind_speed = weather["wind"]["speed"]
-        wind_speed_info = Gtk.Label(label=f"Prędkość:\t{wind_speed}km/h\n")
-        wind_speed_info.set_halign(Gtk.Align.START)
-        weather_layout.pack_start(wind_speed_info, False, False, 0)
+        self.wind_speed_info = Gtk.Label(label=f"Prędkość:\t{wind_speed}km/h\n")
+        self.wind_speed_info.set_halign(Gtk.Align.START)
+        weather_layout.pack_start(self.wind_speed_info, False, False, 0)
 
         self.coordinates_info = Gtk.Label(label=f"Obecne współrzędne geograficzne:\nDługość ({lon}), Szerokość ({lat})")
         self.coordinates_info.set_halign(Gtk.Align.START)
@@ -193,8 +193,32 @@ class WeatherWindow(Gtk.Window):
 
         self.main_box.pack_start(menu_bar, False, False, 0)
 
+    def update_weather_in_ui(self, weather):
+        temp = weather["main"]["temp"]
+        self.temp_info.set_text(f"{temp}ºC")
+
+        feels_like_temp = weather["main"]["feels_like"]
+        self.feels_like_temp_info.set_text(f"Odczuwalnie: {feels_like_temp}ºC\n")
+
+        translator = Translator()
+        message = weather["weather"][0]["description"]
+        translated_message = translator.translate(message, dest="pl").text.lower() if message != "N/A" else "N/A"
+        self.message_info.set_text(f"Spodziewaj się: {translated_message}!\n")
+
+        pressure = weather["main"]["pressure"]
+        self.pressure_info.set_text(f"Ciśnienie:\t{pressure} hPa\n")
+
+        humidity = weather["main"]["humidity"]
+        self.humidity_info.set_text(f"Wilgotność:\t{humidity}%\n")
+
+        wind_speed = weather["wind"]["speed"]
+        self.wind_speed_info.set_text(f"Prędkość:\t{wind_speed}km/h\n")
+
+    def update_coordinates_in_ui(self):
+        self.coordinates_info.set_text(f"Obecne współrzędne geograficzne:\nDługość ({lon}), Szerokość ({lat})")
+
     def on_change_coordinates_clicked(self, _):
-        pass
+        CoordinatesDialog(self).run()
 
     def on_change_theme_clicked(self, _):
         pass
@@ -203,10 +227,92 @@ class WeatherWindow(Gtk.Window):
         pass
 
     def on_refresh_clicked(self, _):
-        pass
+        weather = get_weather()
+        self.update_weather_in_ui(weather)
 
     def on_quit_activate(self, _):
         Gtk.main_quit()
+
+class CoordinatesDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        self.parent = parent
+
+        Gtk.Dialog.__init__(self, "Zmień Współrzędne", parent)
+        self.set_default_size(910, 355)
+
+        self.set_name("inner-box")
+
+        box = self.get_content_area()
+        box.set_spacing(10)
+        box.set_margin_top(10)
+        box.set_margin_bottom(10)
+        box.set_margin_start(10)
+        box.set_margin_end(10)
+
+        longitude_label = Gtk.Label(label="Podaj długość geograficzną w formacie zmiennoprzecinkowym:")
+        box.add(longitude_label)
+
+        self.longitude_entry = Gtk.Entry()
+        self.longitude_entry.set_placeholder_text("<długość geograficzna>")
+        box.add(self.longitude_entry)
+
+        latitude_label = Gtk.Label(label="Podaj szerokość geograficzną w formacie zmiennoprzecinkowym:")
+        box.add(latitude_label)
+
+        self.latitude_entry = Gtk.Entry()
+        self.latitude_entry.set_placeholder_text("<szerokość geograficzna>")
+        box.add(self.latitude_entry)
+
+        save_button = Gtk.Button(label="Zatwierdź")
+        save_button.connect("clicked", self.save_coordinates)
+        box.add(save_button)
+
+        box.show_all()
+
+    def validate_coordinates(self, lon, lat):
+        lon_valid = False
+        lat_valid = False
+        try:
+            lon_float = float(lon)
+            lon_valid = True
+        except ValueError:
+            pass
+        try:
+            lat_float = float(lat)
+            lat_valid = True
+        except ValueError:
+            pass
+        return lon_valid and lat_valid
+
+    def save_coordinates(self, widget):
+        tmp_lon = self.longitude_entry.get_text()
+        tmp_lat = self.latitude_entry.get_text()
+        if self.validate_coordinates(tmp_lon, tmp_lat):
+            global lon, lat
+            lon = tmp_lon
+            lat = tmp_lat
+            self.parent.update_coordinates_in_ui()
+            self.parent.on_refresh_clicked(None)
+            self.destroy()
+        else:
+            ErrorDialog(self).run()
+
+        
+class ErrorDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "Błąd", parent, 0)
+        self.set_default_size(610, 100)
+        self.set_modal(True)
+
+        box = self.get_content_area()
+        box.set_spacing(6)
+        box.set_border_width(10)
+
+        error_label = Gtk.Label(label="Niepoprawne współrzędne geograficzne!")
+        error_label.set_halign(Gtk.Align.CENTER)
+        box.add(error_label)
+
+        self.show_all()
     
 if __name__ == "__main__":
     update_styles_css("0A0D11", "6272A4", "44475A", "F8F8F2")
