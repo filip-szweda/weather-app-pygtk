@@ -347,22 +347,28 @@ class ThemeDialog(Gtk.Dialog):
         Gtk.Dialog.__init__(self, "Zmień Motyw", parent, 0)
         self.set_default_size(910, 355)
 
+        self.set_name("inner-box")
+
         box = self.get_content_area()
 
         dracula_theme_button = Gtk.Button(label="Motyw Dracula (Domyślny)")
         dracula_theme_button.connect("clicked", self.on_theme_button_clicked, "Dracula")
+        dracula_theme_button.set_margin_top(30)
         box.add(dracula_theme_button)
 
         oxocarbon_theme_button = Gtk.Button(label="Motyw Seoul256")
         oxocarbon_theme_button.connect("clicked", self.on_theme_button_clicked, "Seoul256")
+        oxocarbon_theme_button.set_margin_top(30)
         box.add(oxocarbon_theme_button)
 
         seoul256_theme_button = Gtk.Button(label="Motyw Gotham")
         seoul256_theme_button.connect("clicked", self.on_theme_button_clicked, "Gotham")
+        seoul256_theme_button.set_margin_top(30)
         box.add(seoul256_theme_button)
 
         dogrun_theme_button = Gtk.Button(label="Motyw Nord")
         dogrun_theme_button.connect("clicked", self.on_theme_button_clicked, "Nord")
+        dogrun_theme_button.set_margin_top(30)
         box.add(dogrun_theme_button)
 
         self.show_all()
