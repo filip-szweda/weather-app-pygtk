@@ -61,15 +61,15 @@ def update_styles_css(color1, color2, color3, color4):
         file.write(styles_css)
 
 def get_weather():
-    # url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
-    # response = requests.get(url)
-    # global is_sunny
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     message = data["weather"][0]["description"]
-    #     is_sunny = "rain" in message or "cloud" in message
-    #     return data
-    # is_sunny = True
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+    response = requests.get(url)
+    global is_sunny
+    if response.status_code == 200:
+        data = response.json()
+        message = data["weather"][0]["description"]
+        is_sunny = "rain" in message or "cloud" in message
+        return data
+    is_sunny = True
     return {
         "weather": [
             {
@@ -249,6 +249,7 @@ class CoordinatesDialog(Gtk.Dialog):
 
         Gtk.Dialog.__init__(self, "Zmień Współrzędne", parent)
         self.set_default_size(910, 355)
+        self.set_resizable(False)
         self.set_name("inner-box")
 
         box = self.get_content_area()
@@ -311,6 +312,7 @@ class ErrorDialog(Gtk.Dialog):
     def __init__(self, parent):
         Gtk.Dialog.__init__(self, "Błąd", parent, 0)
         self.set_default_size(610, 100)
+        self.set_resizable(False)
         self.set_name("inner-box")
         self.set_modal(True)
 
@@ -333,10 +335,9 @@ class AboutDialog(Gtk.Dialog):
         box = self.get_content_area()
 
         label = Gtk.Label()
-        label.set_text("Aplikacja prognozy pogody pozwala na natychmiastowe uzyskanie aktualnych informacji o: temperaturze wraz z wartością odzuwalną, podsumowaniu pogody, ciśnieniu, wilgotności i prędkości wiatru. Wyświetlana jest ikona przedstawiająca obecną sytuację pogodową. Działanie programu wymaga ustawienia lokalizacji według miasta lub współrzędnych geograficznych.")
-        label.set_justify(Gtk.Justification.FILL)
-        label.set_line_wrap(True)
-        box.pack_start(label, True, True, 0)
+        label.set_text("Aplikacja prognozy pogody pozwala na natychmiastowe uzyskanie aktualnych informacji o:\ntemperaturze wraz z wartością odzuwalną, podsumowaniu pogody, ciśnieniu, wilgotności i\nprędkości wiatru. Wyświetlana jest ikona przedstawiająca obecną sytuację pogodową.\nDziałanie programu wymaga ustawienia lokalizacji według miasta lub współrzędnych geograficznych.")
+        label.set_margin_top(120)
+        box.add(label)
 
         self.show_all()
 
@@ -346,7 +347,7 @@ class ThemeDialog(Gtk.Dialog):
 
         Gtk.Dialog.__init__(self, "Zmień Motyw", parent, 0)
         self.set_default_size(910, 355)
-
+        self.set_resizable(False)
         self.set_name("inner-box")
 
         box = self.get_content_area()
