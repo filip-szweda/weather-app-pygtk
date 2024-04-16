@@ -67,7 +67,7 @@ def get_weather():
     if response.status_code == 200:
         data = response.json()
         message = data["weather"][0]["description"]
-        is_sunny = "rain" in message or "cloud" in message
+        is_sunny = "rain" not in message and "cloud" not in message and "storm" not in message and "snow" not in message and "mist" not in message and "fog" not in message and "clouds" not in message
         return data
     is_sunny = True
     return {
@@ -114,11 +114,6 @@ class WeatherWindow(Gtk.Window):
         image_layout = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         layout.pack_start(image_layout, True, True, 0)
 
-        image_label = Gtk.Image()
-        pixmap = GdkPixbuf.Pixbuf.new_from_file("sunny.png" if is_sunny else "cloudy.png")
-        image_label.set_from_pixbuf(pixmap)
-        image_layout.pack_start(image_label, False, False, 0)
-
         weather_layout = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         layout.pack_start(weather_layout, True, True, 0)
 
@@ -160,6 +155,11 @@ class WeatherWindow(Gtk.Window):
         self.coordinates_info = Gtk.Label(label=f"Obecne współrzędne geograficzne:\nDługość ({lon}), Szerokość ({lat})")
         self.coordinates_info.set_halign(Gtk.Align.START)
         weather_layout.pack_start(self.coordinates_info, False, False, 0)
+
+        self.image_label = Gtk.Image()
+        pixmap = GdkPixbuf.Pixbuf.new_from_file("sunny.png" if is_sunny else "cloudy.png")
+        self.image_label.set_from_pixbuf(pixmap)
+        image_layout.pack_start(self.image_label, False, False, 0)
 
     def build_menu_bar(self):
         menu_bar = Gtk.MenuBar()
@@ -226,6 +226,10 @@ class WeatherWindow(Gtk.Window):
     def update_theme_in_ui(self):
         self.css_provider.load_from_path("styles.css")
         self.context.add_provider_for_screen(self.screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def update_image_in_ui(self):
+        pixmap = GdkPixbuf.Pixbuf.new_from_file("sunny.png" if is_sunny else "cloudy.png")
+        self.image_label.set_from_pixbuf(pixmap)
 
     def on_change_coordinates_clicked(self, _):
         CoordinatesDialog(self).run()
@@ -303,6 +307,7 @@ class CoordinatesDialog(Gtk.Dialog):
             lat = tmp_lat
             self.parent.update_coordinates_in_ui()
             self.parent.on_refresh_clicked(None)
+            self.parent.update_image_in_ui()
             self.destroy()
         else:
             ErrorDialog(self).run()
