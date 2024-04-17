@@ -263,14 +263,14 @@ class CoordinatesDialog(Gtk.Dialog):
         box.set_margin_start(10)
         box.set_margin_end(10)
 
-        longitude_label = Gtk.Label(label="Podaj długość geograficzną w formacie zmiennoprzecinkowym:")
+        longitude_label = Gtk.Label(label="Podaj długość geograficzną w formacie zmiennoprzecinkowym (-180; 180):")
         box.add(longitude_label)
 
         self.longitude_entry = Gtk.Entry()
         self.longitude_entry.set_placeholder_text("<długość geograficzna>")
         box.add(self.longitude_entry)
 
-        latitude_label = Gtk.Label(label="Podaj szerokość geograficzną w formacie zmiennoprzecinkowym:")
+        latitude_label = Gtk.Label(label="Podaj szerokość geograficzną w formacie zmiennoprzecinkowym (−90; 90):")
         box.add(latitude_label)
 
         self.latitude_entry = Gtk.Entry()
@@ -283,25 +283,37 @@ class CoordinatesDialog(Gtk.Dialog):
 
         self.show_all()
 
-    def validate_coordinates(self, lon, lat):
-        lon_valid = False
-        lat_valid = False
+    def validate_longitude(self, lon):
         try:
             lon_float = float(lon)
-            lon_valid = True
+            return -180 <= lon_float <= 180
         except ValueError:
-            pass
+            return False
+        
+    def validate_latitude(self, lat):
         try:
             lat_float = float(lat)
-            lat_valid = True
+            return -90 <= lat_float <= 90
         except ValueError:
-            pass
-        return lon_valid and lat_valid
+            return False
 
     def save_coordinates(self, widget):
         tmp_lon = self.longitude_entry.get_text()
         tmp_lat = self.latitude_entry.get_text()
-        if self.validate_coordinates(tmp_lon, tmp_lat):
+
+        is_lon_valid = self.validate_longitude(tmp_lon)
+        is_lat_valid = self.validate_latitude(tmp_lat)
+
+        if not is_lon_valid and not is_lat_valid:
+            message = "Niepoprawne współrzędne geograficzne!"
+            ErrorDialog(self, message).run()
+        elif not is_lon_valid:
+            message = "Niepoprawna długość geograficzna!"
+            ErrorDialog(self, message).run()
+        elif not is_lat_valid:
+            message = "Niepoprawna szerokość geograficzna!"
+            ErrorDialog(self, message).run()
+        else:
             global lon, lat
             lon = tmp_lon
             lat = tmp_lat
@@ -309,12 +321,9 @@ class CoordinatesDialog(Gtk.Dialog):
             self.parent.on_refresh_clicked(None)
             self.parent.update_image_in_ui()
             self.destroy()
-        else:
-            ErrorDialog(self).run()
-
         
 class ErrorDialog(Gtk.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, message=""):
         Gtk.Dialog.__init__(self, "Błąd", parent, 0)
         self.set_default_size(610, 100)
         self.set_resizable(False)
@@ -325,7 +334,7 @@ class ErrorDialog(Gtk.Dialog):
         box.set_spacing(6)
         box.set_border_width(10)
 
-        error_label = Gtk.Label(label="Niepoprawne współrzędne geograficzne!")
+        error_label = Gtk.Label(label=message)
         error_label.set_halign(Gtk.Align.CENTER)
         box.add(error_label)
 
